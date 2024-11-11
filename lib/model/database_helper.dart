@@ -62,12 +62,6 @@ class DatabaseHelper {
     return result; // Mengembalikan hasil query sebagai list map.
   }
 
-  Future<Map<String, dynamic>> readNoteBId(int id) async {
-    final db = await instance.database;
-    final result = await db.query('notes', where: 'id = ?', whereArgs: [id]);
-    return result.first;
-  }
-
   // Fungsi untuk memperbarui catatan yang sudah ada di database.
   Future<int> update(Map<String, dynamic> note) async {
     final db = await instance.database;

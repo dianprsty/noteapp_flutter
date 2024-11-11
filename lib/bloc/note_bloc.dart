@@ -33,21 +33,6 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
       },
     );
 
-    on<LoadNoteById>((event, emit) async {
-      try {
-        // Mengambil catatan berdasarkan ID dari database.
-        final note = await _databaseHelper.readNoteBId(event.id);
-        debugPrint(
-            'Loaded note with ID: ${event.id}'); // Untuk debugging, menampilkan ID catatan yang telah dimuat.
-        emit(NotesLoaded([
-          Note.fromMap(note)
-        ])); // Menghasilkan state NotesLoaded dengan catatan yang telah dimuat.
-      } catch (e) {
-        emit(NotesError(
-            "Failed to load note: $e")); // Jika terjadi error, menggayakan state NotesError.
-      }
-    });
-
     on<AddNote>((event, emit) async {
       try {
         // Menambahkan catatan ke database dan mendapatkan ID catatan baru.

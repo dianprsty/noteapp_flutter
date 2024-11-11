@@ -38,6 +38,7 @@ class NoteDetailPageState extends State<NoteDetailPage> {
     _contentController = TextEditingController(text: _note.content);
   }
 
+  // dispose controller to prevent memory leaks
   @override
   void dispose() {
     _titleController.dispose();
