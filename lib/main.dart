@@ -1,6 +1,10 @@
+import 'dart:developer';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
+import 'package:universal_platform/universal_platform.dart';
 import 'locator.dart'; // Import konfigurasi GetIt untuk dependency injection
 import 'go_router.dart'; // Import pengaturan router menggunakan GoRouter
 import 'package:provider/provider.dart'; // Import Provider untuk state management
@@ -9,11 +13,20 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart'; // Import untuk FFI SQLite
 
 void main() {
   // Menginisialisasi SQLite FFI (Foreign Function Interface) untuk akses database pada platform non-native seperti desktop
-  if (Platform.isWindows || Platform.isLinux) {
+  if (UniversalPlatform.isWindows ||
+      UniversalPlatform.isLinux ||
+      UniversalPlatform.isMacOS) {
     sqfliteFfiInit();
   }
-  // Menentukan databaseFactory untuk digunakan oleh sqflite dengan FFI
-  databaseFactory = databaseFactoryFfi;
+
+  if (kIsWeb) {
+    log('web run');
+    // Change default factory on the web
+    databaseFactory = databaseFactoryFfiWeb;
+  } else {
+    // Menentukan databaseFactory untuk digunakan oleh sqflite dengan FFI
+    databaseFactory = databaseFactoryFfi;
+  }
 
   // Menyiapkan dependency injection menggunakan GetIt
   setupLocator();

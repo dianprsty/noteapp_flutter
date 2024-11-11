@@ -1,7 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 
 // Kelas DatabaseHelper untuk mengelola operasi CRUD pada tabel 'notes'.
 class DatabaseHelper {
@@ -23,8 +27,13 @@ class DatabaseHelper {
   // Fungsi untuk inisialisasi database.
   Future<Database> _initDB(String filePath) async {
     // Mendapatkan path direktori database menggunakan path_provider.
-    final dbPath = await getApplicationCacheDirectory();
-    final path = join(dbPath.path, filePath); // Menyusun path lengkap database.
+    String? path = filePath;
+
+    // Jika bukan web, tambahkan path ke direktori cache menggunakan path provider.
+    if (!kIsWeb) {
+      final dbPath = await getApplicationCacheDirectory();
+      path = join(dbPath.path, filePath); // Menyusun path lengkap database.
+    }
     // Membuka atau membuat database dan menentukan skema tabel.
     return await openDatabase(path, version: 1, onCreate: _createDB);
   }
