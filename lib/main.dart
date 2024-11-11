@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'locator.dart'; // Import konfigurasi GetIt untuk dependency injection
 import 'go_router.dart'; // Import pengaturan router menggunakan GoRouter
@@ -7,7 +9,9 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart'; // Import untuk FFI SQLite
 
 void main() {
   // Menginisialisasi SQLite FFI (Foreign Function Interface) untuk akses database pada platform non-native seperti desktop
-  sqfliteFfiInit();
+  if (Platform.isWindows || Platform.isLinux) {
+    sqfliteFfiInit();
+  }
   // Menentukan databaseFactory untuk digunakan oleh sqflite dengan FFI
   databaseFactory = databaseFactoryFfi;
 
@@ -28,8 +32,10 @@ class NoteApp extends StatelessWidget {
       providers: [
         // Menyediakan instance NoteBloc menggunakan locator (GetIt) dan menutupnya saat widget dihancurkan
         Provider<NoteBloc>(
-          create: (_) => locator<NoteBloc>(), // Mengambil instance NoteBloc dari locator
-          dispose: (_, bloc) => bloc.close, // Menutup NoteBloc saat tidak lagi digunakan
+          create: (_) =>
+              locator<NoteBloc>(), // Mengambil instance NoteBloc dari locator
+          dispose: (_, bloc) =>
+              bloc.close, // Menutup NoteBloc saat tidak lagi digunakan
         ),
       ],
       // Menggunakan MaterialApp.router untuk mengonfigurasi router berdasarkan AppRouter

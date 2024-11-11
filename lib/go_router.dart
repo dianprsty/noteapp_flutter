@@ -17,7 +17,12 @@ class AppRouter {
         builder: (context, state) {
           // Mengambil ID dari parameter URL dan mengonversinya ke tipe int
           final id = int.tryParse(state.params['id']!) ?? 0;
-          return NoteDetailPage(id: id);
+          final (title, content) = state.extra as (String, String);
+          return NoteDetailPage(
+            id: id,
+            title: title,
+            content: content,
+          );
         },
       ),
     ],

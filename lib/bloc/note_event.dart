@@ -7,6 +7,13 @@ abstract class NoteEvent {}
 // Event untuk memuat semua catatan dari database.
 class LoadNotes extends NoteEvent {}
 
+// Event untuk memuat catatan berdasarkan ID.
+class LoadNoteById extends NoteEvent {
+  final int id;
+  // Konstruktor menerima ID catatan yang ingin dimuat.
+  LoadNoteById(this.id);
+}
+
 // Event untuk menambahkan catatan baru.
 // Memiliki properti 'note' yang merupakan objek Note yang ingin ditambahkan.
 class AddNote extends NoteEvent {

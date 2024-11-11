@@ -1,13 +1,13 @@
 // Kelas Note merepresentasikan model data untuk catatan dalam aplikasi.
 // Terdiri dari tiga properti: id, title, dan content.
 class Note {
-  final int id;         // ID unik untuk setiap catatan.
-  final String title;   // Judul catatan.
+  final int? id; // ID unik untuk setiap catatan.
+  final String title; // Judul catatan.
   final String content; // Isi catatan.
 
   // Konstruktor untuk menginisialisasi objek Note dengan nilai-nilai yang diberikan.
   Note({
-    required this.id,
+    this.id,
     required this.title,
     required this.content,
   });

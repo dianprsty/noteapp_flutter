@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -14,33 +15,38 @@ class DatabaseHelper {
   // Getter untuk mengakses database, akan menginisialisasi database jika belum ada.
   Future<Database> get database async {
     if (_database != null) return _database!;
-    _database = await _initDB('notes.db'); // Membuat atau membuka database dengan nama 'notes.db'.
+    _database = await _initDB(
+        'notes.db'); // Membuat atau membuka database dengan nama 'notes.db'.
     return _database!;
   }
 
   // Fungsi untuk inisialisasi database.
   Future<Database> _initDB(String filePath) async {
-    // Mendapatkan path direktori database.
-    final dbPath = await getDatabasesPath();
-    final path = join(dbPath, filePath); // Menyusun path lengkap database.
+    // Mendapatkan path direktori database menggunakan path_provider.
+    final dbPath = await getApplicationCacheDirectory();
+    final path = join(dbPath.path, filePath); // Menyusun path lengkap database.
     // Membuka atau membuat database dan menentukan skema tabel.
     return await openDatabase(path, version: 1, onCreate: _createDB);
   }
 
   // Fungsi untuk membuat tabel 'notes' di database.
+  // Kolom ID sebagai primary key yang auto increment.
+  // Kolom title untuk judul catatan.
+  // Kolom content untuk isi catatan.
   Future _createDB(Database db, int version) async {
     await db.execute('''
       CREATE TABLE notes (
-        id INTEGER PRIMARY KEY AUTOINCREMENT, // Kolom ID sebagai primary key yang auto increment.
-        title TEXT NOT NULL,                  // Kolom title untuk judul catatan.
-        content TEXT NOT NULL                 // Kolom content untuk isi catatan.
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+        title TEXT NOT NULL,                  
+        content TEXT NOT NULL                 
       )
     ''');
   }
 
   // Fungsi untuk menambahkan catatan baru ke database.
   Future<int> create(Map<String, dynamic> note) async {
-    final db = await instance.database; // Memastikan database sudah terinisialisasi.
+    final db =
+        await instance.database; // Memastikan database sudah terinisialisasi.
     // Menyisipkan data catatan ke dalam tabel 'notes'.
     return await db.insert('notes', note);
   }
@@ -49,9 +55,17 @@ class DatabaseHelper {
   Future<List<Map<String, dynamic>>> readAllNotes() async {
     final db = await instance.database;
     // Melakukan query untuk mengambil semua data catatan.
-    final result = await db.query('notes');
+    final result = await db.query(
+      'notes',
+    );
     debugPrint('Database result: $result'); // Log untuk mengecek hasil query.
     return result; // Mengembalikan hasil query sebagai list map.
+  }
+
+  Future<Map<String, dynamic>> readNoteBId(int id) async {
+    final db = await instance.database;
+    final result = await db.query('notes', where: 'id = ?', whereArgs: [id]);
+    return result.first;
   }
 
   // Fungsi untuk memperbarui catatan yang sudah ada di database.
